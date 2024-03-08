@@ -2,7 +2,7 @@
 // https://docs.swift.org/swift-book
 import AVFoundation
 import PhotosUI
-import _PhotosUI_SwiftUI
+import SwiftUI
 
 public class checkPermission {
     public static func authorizeCamera(completion: @escaping (Bool) -> Void) {
@@ -32,6 +32,19 @@ public class checkPermission {
     }
 }
 
+@available(iOS 13.0, *)
+public func imageToUIImage(originalImage: Image) -> UIImage {
+    let controller = UIHostingController(rootView: originalImage)
+    controller.view.layoutIfNeeded()
+    
+    let renderer = UIGraphicsImageRenderer(size: controller.view.frame.size)
+    let image = renderer.image { context in
+        controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+    }
+    
+    return image
+}
+
 public func resizedImageRect(for originalImage: UIImage, targetSize: CGSize) -> CGRect {
     let widthRatio = targetSize.width / originalImage.size.width
     let heightRatio = targetSize.height / originalImage.size.height
@@ -55,4 +68,40 @@ public func resizeImage(originalImage: UIImage, toSize newSize: CGSize) -> UIIma
     }
     
     return resizedImage
+}
+
+public func CropInBackground(inputImage: UIImage, cropWidth: Double, cropHeight: Double) async throws -> UIImage {
+    
+    enum CroppingError: Error {
+        case imageNotFound, failedToCrop
+    }
+    
+    let croppingFrame: CGRect
+    let scaleFactor: CGFloat
+    let processedImageWidth: CGFloat
+    let processedImageHeight: CGFloat
+    let croppedImage: UIImage
+    guard let cgImage: CGImage = inputImage.cgImage else {
+        print("image not found")
+        throw CroppingError.imageNotFound
+    }
+    
+    // Declaration of cropping frame size
+    scaleFactor = inputImage.scale
+    processedImageWidth = (inputImage.size.width * scaleFactor) - (cropWidth * scaleFactor)
+    processedImageHeight = (inputImage.size.height * scaleFactor) - (cropHeight * scaleFactor)
+    
+    // Declaration of frame for cropping
+    croppingFrame = CGRect(x: 0, y: 0, width: processedImageWidth, height: processedImageHeight)
+    
+    // Cropping CGImage
+    guard let processedCGImage: CGImage = cgImage.cropping(to: croppingFrame) else {
+        print("image not found")
+        throw CroppingError.failedToCrop
+    }
+    
+    // Convert CGImage to UIImage
+    croppedImage = UIImage(cgImage: processedCGImage, scale: scaleFactor, orientation: inputImage.imageOrientation)
+    
+    return croppedImage
 }
