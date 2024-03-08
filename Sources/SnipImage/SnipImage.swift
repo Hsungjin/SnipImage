@@ -1,10 +1,9 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 import AVFoundation
-import PhotosUI
+import _PhotosUI_SwiftUI
 
 public class checkPermission {
-    
     public static func authorizeCamera(completion: @escaping (Bool) -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
@@ -30,4 +29,7 @@ public class checkPermission {
             completion(false)
         }
     }
+    
+    @available(iOS 16.0, *)
+    public static var selectImage: PhotosPickerItem?
 }
