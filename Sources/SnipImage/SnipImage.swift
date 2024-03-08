@@ -30,6 +30,9 @@ public class checkPermission {
         }
     }
     
+}
+
+public class SnipImage {
     @available(iOS 16.0, *)
     public static var selectImage: PhotosPickerItem?
 }
