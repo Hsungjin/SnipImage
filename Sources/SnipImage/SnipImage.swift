@@ -7,4 +7,8 @@ public struct testLibrary {
     public func test() {
         print("hihihihi")
     }
+    
+    public init() {
+        
+    }
 }
