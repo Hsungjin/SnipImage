@@ -1,6 +1,10 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-struct testLibrary {
-    var printrang = "Hello sungjin"
+public struct testLibrary {
+    public var text = "Hello sungjin"
+    
+    public func test() {
+        print("hihihihi")
+    }
 }
