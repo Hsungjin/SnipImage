@@ -1,6 +1,7 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 import AVFoundation
+import PhotosUI
 import _PhotosUI_SwiftUI
 
 public class checkPermission {
@@ -29,10 +30,29 @@ public class checkPermission {
             completion(false)
         }
     }
-    
 }
 
-public class SnipImage {
-    @available(iOS 16.0, *)
-    public static var selectImage: PhotosPickerItem?
+public func resizedImageRect(for originalImage: UIImage, targetSize: CGSize) -> CGRect {
+    let widthRatio = targetSize.width / originalImage.size.width
+    let heightRatio = targetSize.height / originalImage.size.height
+    let ratio = min(widthRatio, heightRatio)
+    
+    let newSize = CGSize(width: originalImage.size.width * ratio, height: originalImage.size.height * ratio)
+    let rect = CGRect(x: (targetSize.width - newSize.width) / 2.0,
+                      y: (targetSize.height - newSize.height) / 2.0,
+                      width: newSize.width,
+                      height: newSize.height)
+    return rect
+}
+
+public func resizeImage(originalImage: UIImage, toSize newSize: CGSize) -> UIImage {
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = 1
+    let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
+    
+    let resizedImage = renderer.image { context in
+        originalImage.draw(in: CGRect(origin: .zero, size: newSize))
+    }
+    
+    return resizedImage
 }
